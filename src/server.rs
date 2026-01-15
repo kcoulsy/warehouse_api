@@ -7,6 +7,7 @@ use tower_http::{
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::config::Config;
+use crate::db;
 use crate::routes;
 
 pub fn init_tracing(log_level: &str) {
@@ -19,21 +20,25 @@ pub fn init_tracing(log_level: &str) {
         .init();
 }
 
-pub fn create_app() -> Router {
-    let router = routes::create_router();
+pub async fn create_app(database_url: &str) -> Result<Router, Box<dyn std::error::Error>> {
+    let db = db::create_connection(database_url)
+        .await
+        .map_err(|e| format!("Failed to connect to database: {}", e))?;
 
-    router.layer(
+    let router = routes::create_router(db);
+
+    Ok(router.layer(
         ServiceBuilder::new()
             .layer(CatchPanicLayer::new())
             .layer(TraceLayer::new_for_http())
             .into_inner(),
-    )
+    ))
 }
 
 pub async fn run_server(config: Config) -> Result<(), Box<dyn std::error::Error>> {
     init_tracing(&config.log_level);
 
-    let app = create_app();
+    let app = create_app(&config.database_url).await?;
     let address = config.address();
 
     let listener = tokio::net::TcpListener::bind(&address)

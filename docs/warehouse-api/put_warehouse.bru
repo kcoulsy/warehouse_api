@@ -1,0 +1,20 @@
+meta {
+  name: PUT /warehouses/:id
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://127.0.0.1:4000/warehouses/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Updated Warehouse Name",
+    "address": "456 New St",
+    "timezone": "America/Los_Angeles",
+    "is_active": false
+  }
+}

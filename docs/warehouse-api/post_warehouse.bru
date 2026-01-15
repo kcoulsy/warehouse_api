@@ -1,0 +1,20 @@
+meta {
+  name: POST /warehouses
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:4000/warehouses
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Main Warehouse",
+    "address": "123 Main St",
+    "timezone": "America/New_York",
+    "is_active": true
+  }
+}

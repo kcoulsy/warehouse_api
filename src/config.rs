@@ -19,6 +19,7 @@ pub struct Config {
     pub host: String,
     pub port: u16,
     pub log_level: String,
+    pub database_url: String,
 }
 
 impl Config {
@@ -30,6 +31,8 @@ impl Config {
                 .parse()
                 .unwrap_or(3000),
             log_level: get_log_level(),
+            database_url: env::var("DATABASE_URL")
+                .expect("DATABASE_URL must be set"),
         }
     }
 
@@ -44,6 +47,7 @@ impl Default for Config {
             host: "0.0.0.0".to_string(),
             port: 3000,
             log_level: "info".to_string(),
+            database_url: "postgresql://postgres:postgres@localhost:5432/warehouse_db".to_string(),
         }
     }
 }

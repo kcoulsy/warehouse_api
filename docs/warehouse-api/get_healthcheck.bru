@@ -5,32 +5,7 @@ meta {
 }
 
 get {
-  url: {{base_url}}/health
+  url: http://127.0.0.1:4000/health
   body: none
   auth: none
-}
-
-params:query {
-  
-}
-
-headers {
-  
-}
-
-docs {
-  # Health Check
-  
-  Returns the health status of the API service.
-  
-  ## Response
-  
-  - **200 OK**: Service is healthy
-    ```json
-    {
-      "status": "healthy",
-      "service": "warehouse_api",
-      "version": "0.1.0"
-    }
-    ```
 }
