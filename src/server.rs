@@ -1,6 +1,9 @@
 use axum::Router;
 use tower::ServiceBuilder;
-use tower_http::trace::TraceLayer;
+use tower_http::{
+    trace::TraceLayer,
+    catch_panic::CatchPanicLayer,
+};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::config::Config;
@@ -21,6 +24,7 @@ pub fn create_app() -> Router {
 
     router.layer(
         ServiceBuilder::new()
+            .layer(CatchPanicLayer::new())
             .layer(TraceLayer::new_for_http())
             .into_inner(),
     )
