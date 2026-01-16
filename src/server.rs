@@ -1,6 +1,10 @@
 use axum::Router;
 use tower::ServiceBuilder;
-use tower_http::{catch_panic::CatchPanicLayer, trace::TraceLayer};
+use tower_http::{
+    catch_panic::CatchPanicLayer,
+    cors::{AllowOrigin, CorsLayer},
+    trace::TraceLayer,
+};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::config::Config;
@@ -24,8 +28,20 @@ pub async fn create_app(database_url: &str) -> Result<Router, Box<dyn std::error
 
     let router = routes::create_router(db);
 
+    let cors = CorsLayer::new()
+        .allow_origin(
+            AllowOrigin::predicate(|origin, _request_head| {
+                let origin_str = origin.to_str().unwrap_or("");
+                origin_str.starts_with("http://localhost:") || origin_str.starts_with("http://127.0.0.1:")
+            })
+        )
+        .allow_methods(tower_http::cors::Any)
+        .allow_headers(tower_http::cors::Any)
+        .allow_credentials(true);
+
     Ok(router.layer(
         ServiceBuilder::new()
+            .layer(cors)
             .layer(CatchPanicLayer::new())
             .layer(TraceLayer::new_for_http())
             .into_inner(),
