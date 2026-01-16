@@ -2900,6 +2900,7 @@ dependencies = [
  "chrono-tz",
  "csv",
  "dotenvy",
+ "rand",
  "sea-orm",
  "serde",
  "serde_json",

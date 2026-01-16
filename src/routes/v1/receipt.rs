@@ -9,5 +9,9 @@ pub fn receipt_routes(db: DatabaseConnection) -> Router {
             "/receipts/bulk",
             axum::routing::post(handlers::bulk_receipt),
         )
+        .route(
+            "/receipts/generate-sample",
+            axum::routing::get(handlers::generate_sample),
+        )
         .with_state(db)
 }
