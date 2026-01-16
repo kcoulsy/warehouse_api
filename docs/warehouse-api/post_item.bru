@@ -1,0 +1,21 @@
+meta {
+  name: POST /v1/items
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://127.0.0.1:4000/v1/items
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "sku": "SKU-001",
+    "name": "Sample Item",
+    "unit_of_measure": "EA",
+    "barcode": "1234567890123",
+    "is_serialized": false
+  }
+}

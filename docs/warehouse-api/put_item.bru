@@ -1,0 +1,21 @@
+meta {
+  name: PUT /v1/items/:id
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://127.0.0.1:4000/v1/items/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "sku": "SKU-001-UPDATED",
+    "name": "Updated Item Name",
+    "unit_of_measure": "BOX",
+    "barcode": "9876543210987",
+    "is_serialized": true
+  }
+}
