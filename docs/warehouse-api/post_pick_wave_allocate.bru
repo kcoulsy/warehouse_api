@@ -1,0 +1,68 @@
+meta {
+  name: POST /v1/pick-waves/{id}/allocate
+  type: http
+  seq: 11
+}
+
+post {
+  url: http://127.0.0.1:4000/v1/pick-waves/1/allocate
+  body: none
+  auth: none
+}
+
+docs {
+  # Allocate Pick Wave
+
+  Allocates inventory for a pick wave by creating reservations. This reserves the inventory so it cannot be allocated to other pick waves or transfers.
+
+  ## Path Parameters
+
+  - `id` (required) - Pick wave ID (positive integer)
+
+  ## Validation
+
+  - Pick wave must exist
+  - Pick wave must be in "DRAFT" status
+  - Returns 400 if pick wave is not in DRAFT status
+  - Validates stock availability for each pick line
+  - Returns 400 if insufficient stock is available (accounting for existing reservations)
+
+  ## Process
+
+  For each pick line in the wave:
+  - Checks available stock (on_hand - reserved)
+  - Creates a reservation linking the inventory to this pick wave
+  - Updates pick wave status to "ALLOCATED"
+
+  ## Reservations
+
+  Reservations are created with:
+  - Item ID and location ID from the pick line
+  - Quantity from the pick line
+  - Reason field set to "pick_wave:{id}" for tracking
+  - No expiry time (reservations remain until explicitly released)
+
+  ## Response
+
+  Returns the allocated pick wave with:
+  - `pick_wave_id` - The pick wave ID
+  - `status` - Pick wave status (will be "ALLOCATED")
+  - `lines` - Array of pick line items
+  - `reservations` - Array of created reservations with:
+    - `id` - Reservation ID
+    - `item_id` - Item ID
+    - `location_id` - Location ID
+    - `quantity` - Reserved quantity
+  - `updated_at` - Allocation timestamp
+
+  ## Important Notes
+
+  - Once allocated, the inventory is reserved and cannot be used by other operations
+  - Reservations are automatically released when the pick is confirmed
+  - If allocation fails for any line, no reservations are created (all-or-nothing)
+  - The pick wave must be confirmed using `POST /v1/pick-waves/{id}/confirm-pick` to complete the process
+
+  ## Example
+
+  Replace `1` in the URL with the actual pick wave ID from the create pick wave response.
+}

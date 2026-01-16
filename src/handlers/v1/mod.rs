@@ -1,5 +1,6 @@
 pub mod item;
 pub mod location;
+pub mod pick;
 pub mod receipt;
 pub mod transfer;
 pub mod warehouse;
@@ -8,6 +9,7 @@ pub use item::{create_item, delete_item, get_item, get_items, update_item};
 pub use location::{
     create_location, delete_location, get_location, get_locations, update_location,
 };
+pub use pick::{allocate_pick_wave, confirm_pick, create_pick_wave};
 pub use receipt::{bulk_receipt, create_receipt, generate_sample};
 pub use transfer::{complete_transfer, create_transfer};
 pub use warehouse::{

@@ -1,6 +1,7 @@
 mod health;
 mod item;
 mod location;
+mod pick;
 mod receipt;
 mod transfer;
 mod warehouse;
@@ -15,5 +16,6 @@ pub fn create_v1_router(db: DatabaseConnection) -> Router {
         .merge(location::location_routes(db.clone()))
         .merge(item::item_routes(db.clone()))
         .merge(receipt::receipt_routes(db.clone()))
-        .merge(transfer::transfer_routes(db))
+        .merge(transfer::transfer_routes(db.clone()))
+        .merge(pick::pick_routes(db))
 }

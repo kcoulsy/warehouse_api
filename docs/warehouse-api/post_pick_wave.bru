@@ -1,0 +1,85 @@
+meta {
+  name: POST /v1/pick-waves
+  type: http
+  seq: 10
+}
+
+post {
+  url: http://127.0.0.1:4000/v1/pick-waves
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "items": [
+      {
+        "sku": "SKU-001",
+        "quantity": 10,
+        "location_code": "A1-B2-S3"
+      },
+      {
+        "sku": "SKU-002",
+        "quantity": 5,
+        "location_code": "B1-C2-S1"
+      }
+    ]
+  }
+}
+
+docs {
+  # Create Pick Wave
+
+  Creates a new pick wave with DRAFT status and pick lines with PENDING status.
+
+  ## Prerequisites
+
+  **Important:** Items and locations must exist before creating a pick wave.
+  - Use `POST /v1/items` to create items if they don't exist
+  - Use `POST /v1/locations` to create locations if they don't exist
+  - Ensure items exist at the specified locations (use `POST /v1/receipts` to receive stock)
+  - The locations must have sufficient available stock for all items
+
+  ## Request Body
+
+  - `items` (required) - Array of items to pick, each with:
+    - `sku` (required) - Item SKU (1-100 characters)
+    - `quantity` (required) - Quantity to pick (positive integer, minimum 1)
+    - `location_code` (required) - Location code where item is located (1-100 characters)
+
+  ## Validation
+
+  - Validates that all items exist (returns 404 if not found)
+  - Validates that all locations exist (returns 404 if not found)
+  - Validates stock availability for each item at the specified location
+  - Returns 400 if insufficient stock is available
+  - Validates that at least one item is provided
+
+  ## Response
+
+  Returns the created pick wave with:
+  - `pick_wave_id` - The pick wave ID
+  - `status` - Pick wave status (will be "DRAFT")
+  - `lines` - Array of pick line items with:
+    - `id` - Pick line ID
+    - `item_id` - Item ID
+    - `location_id` - Location ID
+    - `quantity` - Quantity to pick
+    - `status` - Line status (will be "PENDING")
+  - `created_at` - Creation timestamp
+
+  ## Workflow
+
+  The pick wave must go through these steps:
+  1. Create pick wave: `POST /v1/pick-waves` (this endpoint) - Creates wave in DRAFT status
+  2. Allocate inventory: `POST /v1/pick-waves/{id}/allocate` - Reserves inventory, updates to ALLOCATED
+  3. Confirm pick: `POST /v1/pick-waves/{id}/confirm-pick` - Creates ledger entries, releases reservations, updates to COMPLETED
+
+  ## Example Workflow
+
+  1. Create location: `POST /v1/locations` with code "A1-B2-S3"
+  2. Receive stock: `POST /v1/receipts` to add items to "A1-B2-S3"
+  3. Create pick wave: `POST /v1/pick-waves` (this endpoint)
+  4. Allocate inventory: `POST /v1/pick-waves/{id}/allocate`
+  5. Confirm pick: `POST /v1/pick-waves/{id}/confirm-pick`
+}

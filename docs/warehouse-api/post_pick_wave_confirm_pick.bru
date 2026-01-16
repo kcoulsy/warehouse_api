@@ -1,0 +1,80 @@
+meta {
+  name: POST /v1/pick-waves/{id}/confirm-pick
+  type: http
+  seq: 12
+}
+
+post {
+  url: http://127.0.0.1:4000/v1/pick-waves/1/confirm-pick
+  body: none
+  auth: none
+}
+
+docs {
+  # Confirm Pick
+
+  Confirms a pick by atomically:
+  - Creating ledger entries with negative quantity (reason_type: "PICK")
+  - Releasing all reservations for the pick wave
+  - Updating pick line statuses to "CONFIRMED"
+  - Updating pick wave status to "COMPLETED" (if all lines confirmed) or "PICKING" (if partial)
+
+  ## Path Parameters
+
+  - `id` (required) - Pick wave ID (positive integer)
+
+  ## Validation
+
+  - Pick wave must exist
+  - Pick wave must be in "ALLOCATED" status
+  - Returns 400 if pick wave is not in ALLOCATED status
+  - Pick wave must have at least one pick line
+
+  ## Atomic Transaction
+
+  The confirmation is performed in a database transaction, ensuring:
+  - All ledger entries are created or none are created
+  - All reservations are released or none are released
+  - All status updates succeed or fail together
+  - No partial updates are possible
+
+  ## Ledger Entries
+
+  For each pick line, a ledger entry is created with:
+  - `item_id` and `location_id` from the pick line
+  - `quantity_change`: negative quantity (e.g., -10)
+  - `reason_type`: "PICK"
+  - `reference_type`: "pick_wave"
+  - `reference_id`: pick wave ID
+  - `balance_after`: calculated on-hand quantity after the pick
+
+  ## Status Updates
+
+  - All pick lines are updated to "CONFIRMED" status
+  - Pick wave status is updated to:
+    - "COMPLETED" if all lines are confirmed
+    - "PICKING" if some lines are not confirmed (should not happen in normal flow)
+
+  ## Reservation Release
+
+  All reservations created during allocation are automatically deleted. This releases the reserved inventory back to available stock (though the ledger entry already reflects the reduction).
+
+  ## Response
+
+  Returns the confirmed pick with:
+  - `pick_wave_id` - The pick wave ID
+  - `status` - Pick wave status (will be "COMPLETED" or "PICKING")
+  - `lines` - Array of pick line items (all with "CONFIRMED" status)
+  - `ledger_entries` - Array of created ledger entry IDs
+  - `updated_at` - Confirmation timestamp
+
+  ## Example
+
+  Replace `1` in the URL with the actual pick wave ID from the create pick wave response.
+
+  ## Complete Workflow Example
+
+  1. Create pick wave: `POST /v1/pick-waves` → Returns pick_wave_id: 1
+  2. Allocate inventory: `POST /v1/pick-waves/1/allocate` → Reserves inventory
+  3. Confirm pick: `POST /v1/pick-waves/1/confirm-pick` → Creates ledger entries, releases reservations
+}
