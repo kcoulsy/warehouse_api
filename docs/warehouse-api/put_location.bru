@@ -1,0 +1,23 @@
+meta {
+  name: PUT /v1/locations/:id
+  type: http
+  seq: 4
+}
+
+put {
+  url: http://127.0.0.1:4000/v1/locations/1
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "warehouse_id": 1,
+    "code": "A1-B2-S4",
+    "aisle": "A1",
+    "bin": "B2",
+    "shelf": "S4",
+    "is_pickable": false,
+    "is_bulk": true
+  }
+}
