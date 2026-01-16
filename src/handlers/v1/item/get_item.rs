@@ -16,9 +16,7 @@ pub async fn get_item(
     Path(id): Path<i32>,
 ) -> Result<impl IntoResponse, AppError> {
     if id <= 0 {
-        return Err(AppError::bad_request(
-            "Item ID must be a positive integer",
-        ));
+        return Err(AppError::bad_request("Item ID must be a positive integer"));
     }
 
     let item = Entity::find_by_id(id)

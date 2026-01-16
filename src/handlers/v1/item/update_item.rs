@@ -36,10 +36,7 @@ pub struct UpdateItemRequest {
     ))]
     pub unit_of_measure: Option<String>,
 
-    #[validate(length(
-        max = 100,
-        message = "Barcode must be at most 100 characters"
-    ))]
+    #[validate(length(max = 100, message = "Barcode must be at most 100 characters"))]
     pub barcode: Option<String>,
 
     pub is_serialized: Option<bool>,
@@ -69,9 +66,7 @@ pub async fn update_item(
     Json(payload): Json<UpdateItemRequest>,
 ) -> Result<impl IntoResponse, AppError> {
     if id <= 0 {
-        return Err(AppError::bad_request(
-            "Item ID must be a positive integer",
-        ));
+        return Err(AppError::bad_request("Item ID must be a positive integer"));
     }
 
     let request = payload.trim_fields();

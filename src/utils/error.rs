@@ -8,12 +8,12 @@ use validator::ValidationErrors;
 
 #[derive(Debug)]
 pub enum AppError {
-    Internal(String), // 500
-    NotFound(String), // 404
-    BadRequest(String), // 400
+    Internal(String),     // 500
+    NotFound(String),     // 404
+    BadRequest(String),   // 400
     Unauthorized(String), // 401
-    Forbidden(String), // 403
-    Validation(String), // 422
+    Forbidden(String),    // 403
+    Validation(String),   // 422
 }
 
 impl fmt::Display for AppError {
@@ -43,11 +43,9 @@ impl IntoResponse for AppError {
             AppError::BadRequest(msg) => (StatusCode::BAD_REQUEST, msg, "BAD_REQUEST"),
             AppError::Unauthorized(msg) => (StatusCode::UNAUTHORIZED, msg, "UNAUTHORIZED"),
             AppError::Forbidden(msg) => (StatusCode::FORBIDDEN, msg, "FORBIDDEN"),
-            AppError::Validation(msg) => (
-                StatusCode::UNPROCESSABLE_ENTITY,
-                msg,
-                "VALIDATION_ERROR",
-            ),
+            AppError::Validation(msg) => {
+                (StatusCode::UNPROCESSABLE_ENTITY, msg, "VALIDATION_ERROR")
+            }
         };
 
         let body = axum::Json(json!({
@@ -89,7 +87,7 @@ impl AppError {
     /// Collect and format validation errors from validator into a user-friendly string
     pub fn collect_validation_errors(errors: &ValidationErrors) -> String {
         let mut error_messages = Vec::new();
-        
+
         for (field, field_errors) in errors.field_errors() {
             for error in field_errors {
                 let message = error
@@ -103,7 +101,7 @@ impl AppError {
                 error_messages.push(format!("{}: {}", field, message));
             }
         }
-        
+
         if error_messages.is_empty() {
             "Validation failed".to_string()
         } else {

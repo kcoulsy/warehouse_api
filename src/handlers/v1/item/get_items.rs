@@ -14,8 +14,5 @@ pub async fn get_items(
         .await
         .map_err(|e| AppError::internal(format!("Failed to fetch items: {}", e)))?;
 
-    Ok((
-        StatusCode::OK,
-        Json(json!({ "items": items })),
-    ))
+    Ok((StatusCode::OK, Json(json!({ "items": items }))))
 }

@@ -14,8 +14,5 @@ pub async fn get_locations(
         .await
         .map_err(|e| AppError::internal(format!("Failed to fetch locations: {}", e)))?;
 
-    Ok((
-        StatusCode::OK,
-        Json(json!({ "locations": locations })),
-    ))
+    Ok((StatusCode::OK, Json(json!({ "locations": locations }))))
 }

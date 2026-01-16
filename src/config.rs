@@ -31,8 +31,7 @@ impl Config {
                 .parse()
                 .unwrap_or(3000),
             log_level: get_log_level(),
-            database_url: env::var("DATABASE_URL")
-                .expect("DATABASE_URL must be set"),
+            database_url: env::var("DATABASE_URL").expect("DATABASE_URL must be set"),
         }
     }
 

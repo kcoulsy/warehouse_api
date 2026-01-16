@@ -8,9 +8,9 @@ pub struct Model {
     pub id: i32,
     pub item_id: i32,
     pub location_id: i32,
-    pub quantity_change: i32, // +10, -3
-    pub balance_after: Option<i32>, // optional (cached)
-    pub reason_type: String, // RECEIPT | PICK | TRANSFER | ADJUSTMENT | COUNT
+    pub quantity_change: i32,           // +10, -3
+    pub balance_after: Option<i32>,     // optional (cached)
+    pub reason_type: String,            // RECEIPT | PICK | TRANSFER | ADJUSTMENT | COUNT
     pub reference_type: Option<String>, // order_id, transfer_id, count_id
     pub reference_id: Option<i32>,
     pub created_at: DateTimeWithTimeZone,

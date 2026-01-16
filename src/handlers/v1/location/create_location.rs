@@ -27,11 +27,7 @@ pub struct CreateLocationRequest {
     ))]
     pub aisle: String,
 
-    #[validate(length(
-        min = 1,
-        max = 50,
-        message = "Bin must be between 1 and 50 characters"
-    ))]
+    #[validate(length(min = 1, max = 50, message = "Bin must be between 1 and 50 characters"))]
     pub bin: String,
 
     #[validate(length(
