@@ -8,6 +8,7 @@ pub use v1::location::{
     create_location, delete_location, get_location, get_locations, update_location,
 };
 pub use v1::receipt::{bulk_receipt, create_receipt, generate_sample};
+pub use v1::transfer::{complete_transfer, create_transfer};
 pub use v1::warehouse::{
     create_warehouse, delete_warehouse, get_warehouse, get_warehouses, update_warehouse,
 };

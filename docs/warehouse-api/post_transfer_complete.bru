@@ -1,0 +1,52 @@
+meta {
+  name: POST /v1/transfers/{id}/complete
+  type: http
+  seq: 9
+}
+
+post {
+  url: http://127.0.0.1:4000/v1/transfers/1/complete
+  body: none
+  auth: none
+}
+
+docs {
+  # Complete Transfer
+
+  Completes a transfer by atomically updating the ledger:
+  - Decreases quantity at source location
+  - Increases quantity at destination location
+  - Updates transfer status to "COMPLETED"
+
+  ## Path Parameters
+
+  - `id` (required) - Transfer ID (positive integer)
+
+  ## Validation
+
+  - Transfer must exist
+  - Transfer must be in "DRAFT" status
+  - Returns 400 if transfer is already completed or cancelled
+
+  ## Atomic Transaction
+
+  The completion is performed in a database transaction, ensuring:
+  - Both ledger entries (source -qty, destination +qty) succeed or fail together
+  - Transfer status is only updated if all ledger entries succeed
+  - No partial updates are possible
+
+  ## Response
+
+  Returns the completed transfer with:
+  - `transfer_id` - The transfer ID
+  - `from_location_id` - Source location ID
+  - `to_location_id` - Destination location ID
+  - `status` - Transfer status (will be "COMPLETED")
+  - `lines` - Array of transfer line items
+  - `ledger_entries` - Array of created ledger entries (source and destination)
+  - `updated_at` - Completion timestamp
+
+  ## Example
+
+  Replace `1` in the URL with the actual transfer ID from the create transfer response.
+}

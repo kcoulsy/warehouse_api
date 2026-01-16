@@ -2,6 +2,7 @@ mod health;
 mod item;
 mod location;
 mod receipt;
+mod transfer;
 mod warehouse;
 
 use crate::db::DatabaseConnection;
@@ -13,5 +14,6 @@ pub fn create_v1_router(db: DatabaseConnection) -> Router {
         .merge(warehouse::warehouse_routes(db.clone()))
         .merge(location::location_routes(db.clone()))
         .merge(item::item_routes(db.clone()))
-        .merge(receipt::receipt_routes(db))
+        .merge(receipt::receipt_routes(db.clone()))
+        .merge(transfer::transfer_routes(db))
 }

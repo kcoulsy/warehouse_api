@@ -1,0 +1,76 @@
+meta {
+  name: POST /v1/transfers
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://127.0.0.1:4000/v1/transfers
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "from_location_code": "A1-B2-S3",
+    "to_location_code": "B1-C2-S1",
+    "items": [
+      {
+        "sku": "SKU-001",
+        "quantity": 10
+      },
+      {
+        "sku": "SKU-002",
+        "quantity": 5
+      }
+    ]
+  }
+}
+
+docs {
+  # Create Transfer
+
+  Creates a new transfer between two locations with DRAFT status.
+
+  ## Prerequisites
+
+  **Important:** Both source and destination locations must exist before creating a transfer.
+  - Use `POST /v1/locations` to create locations if they don't exist
+  - Ensure items exist at the source location (use `POST /v1/receipts` to receive stock)
+  - The source location must have sufficient available stock for all items
+
+  ## Request Body
+
+  - `from_location_code` (required) - Source location code (1-100 characters)
+  - `to_location_code` (required) - Destination location code (1-100 characters)
+  - `items` (required) - Array of items to transfer, each with:
+    - `sku` (required) - Item SKU (1-100 characters)
+    - `quantity` (required) - Quantity to transfer (positive integer, minimum 1)
+
+  ## Validation
+
+  - Validates that both locations exist (returns 404 if not found)
+  - Validates that source and destination are different
+  - Validates stock availability for each item at the source location
+  - Returns 400 if insufficient stock is available
+
+  ## Response
+
+  Returns the created transfer with:
+  - `transfer_id` - The transfer ID
+  - `from_location_id` - Source location ID
+  - `to_location_id` - Destination location ID
+  - `status` - Transfer status (will be "DRAFT")
+  - `lines` - Array of transfer line items
+  - `created_at` - Creation timestamp
+
+  The transfer must be completed using `POST /v1/transfers/{id}/complete` to actually move the inventory.
+
+  ## Example Workflow
+
+  1. Create source location: `POST /v1/locations` with code "A1-B2-S3"
+  2. Create destination location: `POST /v1/locations` with code "B1-C2-S1"
+  3. Receive stock at source: `POST /v1/receipts` to add items to "A1-B2-S3"
+  4. Create transfer: `POST /v1/transfers` (this endpoint)
+  5. Complete transfer: `POST /v1/transfers/{id}/complete`
+}
