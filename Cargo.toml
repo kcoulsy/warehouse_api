@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-axum = "0.7"
+axum = { version = "0.7", features = ["multipart"] }
 tokio = { version = "1", features = ["full"] }
 tower = "0.4"
 tower-http = { version = "0.5", features = ["trace", "catch-panic"] }
@@ -17,3 +17,5 @@ sea-orm = { version = "0.12", features = ["runtime-tokio-native-tls", "sqlx-post
 validator = { version = "0.18", features = ["derive"] }
 chrono = { version = "0.4", features = ["serde"] }
 chrono-tz = "0.8"
+csv = "1.3"
+uuid = { version = "1.6", features = ["v4", "serde"] }

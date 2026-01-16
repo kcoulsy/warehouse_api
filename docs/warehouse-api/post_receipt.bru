@@ -1,0 +1,20 @@
+meta {
+  name: POST /v1/receipts
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://127.0.0.1:4000/v1/receipts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "sku": "SKU-001",
+    "location_code": "A1-B2-S3",
+    "quantity": 100,
+    "receipt_id": null
+  }
+}

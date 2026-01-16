@@ -1,4 +1,4 @@
-use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
+use sea_orm::{ColumnTrait, ConnectionTrait, EntityTrait, QueryFilter};
 
 use crate::db::DatabaseConnection;
 use crate::entities::ledger;
@@ -9,8 +9,8 @@ use crate::utils::error::AppError;
 /// for a specific item and location.
 ///
 /// Never trust a stored stock number - always compute from the ledger.
-pub async fn calculate_on_hand(
-    db: &DatabaseConnection,
+pub async fn calculate_on_hand<C: ConnectionTrait>(
+    db: &C,
     item_id: i32,
     location_id: i32,
 ) -> Result<i32, AppError> {

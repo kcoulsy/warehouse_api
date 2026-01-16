@@ -1,0 +1,4 @@
+sku,location_code,quantity,name,unit_of_measure,warehouse_id
+SKU-001,L1,100,Item A,EA,1
+SKU-002,L1,50,Item B,EA,1
+SKU-003,L2,200,Item C,EA,1

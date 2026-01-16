@@ -1,0 +1,48 @@
+meta {
+  name: POST /v1/receipts/bulk
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://127.0.0.1:4000/v1/receipts/bulk
+  body: multipartForm
+  auth: none
+}
+
+body:multipart-form {
+  file: @file(sample_receipt.csv)
+}
+
+docs {
+  # Bulk Receipt Import
+
+  Upload a CSV file to receive stock for multiple items in a single transaction.
+
+  ## CSV Format
+
+  Required columns:
+  - `sku` - Item SKU
+  - `location_code` - Location code
+  - `quantity` - Quantity to receive (positive integer)
+
+  Optional columns (for auto-creating items/locations):
+  - `name` - Item name
+  - `unit_of_measure` - Item UOM (default: "EA")
+  - `barcode` - Item barcode
+  - `is_serialized` - Item serialized flag (default: false)
+  - `warehouse_id` - Location warehouse_id (required if creating new location)
+  - `aisle`, `bin`, `shelf` - Location details (defaults: "A", "1", "1")
+  - `is_pickable`, `is_bulk` - Location flags (defaults: false)
+
+  ## Example CSV
+
+  ```csv
+  sku,location_code,quantity,name,unit_of_measure,warehouse_id
+  SKU-001,L1,100,Item A,EA,1
+  SKU-002,L1,50,Item B,EA,1
+  SKU-003,L2,200,Item C,EA,1
+  ```
+
+  All rows in the CSV will be grouped under a single receipt_id.
+}
