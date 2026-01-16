@@ -8,7 +8,7 @@ use serde_json::json;
 
 use crate::db::DatabaseConnection;
 use crate::entities::item::{ActiveModel, CreateItem, Entity, UpdateItem};
-use crate::error::AppError;
+use crate::utils::error::AppError;
 
 pub async fn get_items(
     State(db): State<DatabaseConnection>,

@@ -8,7 +8,7 @@ use serde_json::json;
 
 use crate::db::DatabaseConnection;
 use crate::entities::location::{ActiveModel, CreateLocation, Entity, UpdateLocation};
-use crate::error::AppError;
+use crate::utils::error::AppError;
 
 pub async fn get_locations(
     State(db): State<DatabaseConnection>,

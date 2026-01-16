@@ -4,6 +4,7 @@ use axum::{
 };
 use serde_json::json;
 use std::fmt;
+use validator::ValidationErrors;
 
 #[derive(Debug)]
 pub enum AppError {
@@ -83,5 +84,30 @@ impl AppError {
 
     pub fn validation<S: Into<String>>(msg: S) -> Self {
         Self::Validation(msg.into())
+    }
+
+    /// Collect and format validation errors from validator into a user-friendly string
+    pub fn collect_validation_errors(errors: &ValidationErrors) -> String {
+        let mut error_messages = Vec::new();
+        
+        for (field, field_errors) in errors.field_errors() {
+            for error in field_errors {
+                let message = error
+                    .message
+                    .as_ref()
+                    .map(|m| m.to_string())
+                    .unwrap_or_else(|| {
+                        // Fallback to code if no message
+                        format!("Validation failed for field '{}'", field)
+                    });
+                error_messages.push(format!("{}: {}", field, message));
+            }
+        }
+        
+        if error_messages.is_empty() {
+            "Validation failed".to_string()
+        } else {
+            error_messages.join("; ")
+        }
     }
 }

@@ -1,5 +1,5 @@
 use crate::db::DatabaseConnection;
-use crate::error::AppError;
+use crate::utils::error::AppError;
 use axum::Router;
 
 mod v1;
